@@ -14,6 +14,13 @@ import { createServer as createViteServer } from 'vite';
 
 dotenv.config();
 
+if (!process.env.GEMINI_API_KEY) {
+  console.warn(
+    '[Gemma Vision Assistant] GEMINI_API_KEY is not configured.'
+  );
+}
+     
+
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
