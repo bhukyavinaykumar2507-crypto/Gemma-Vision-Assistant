@@ -1,0 +1,6 @@
+{
+  "name": "Gemma Vision Assistant",
+  "description": "Turn visual information into useful actions with Gemma 4.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
