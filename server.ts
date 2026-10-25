@@ -191,11 +191,21 @@ app.post('/api/analyze', async (req: Request, res: Response) => {
     // Extract base64 payload
     let base64Data = image;
     const match = image.match(/^data:([a-zA-Z0-9]+\/[a-zA-Z0-9-.+]+);base64,(.+)$/);
-    if (match) {
-      cleanMime = match[1].toLowerCase();
-      if (cleanMime === 'image/jpg') cleanMime = 'image/jpeg';
-      base64Data = match[2];
-    }
+  
+if (match) {
+  cleanMime = match[1].toLowerCase();
+  if (cleanMime === 'image/jpg') {
+    cleanMime = 'image/jpeg';
+  }
+  base64Data = match[2];
+}
+
+if (!allowedMimes.includes(cleanMime)) {
+  return res.status(400).json({
+    error: 'Unsupported image type. Please use PNG, JPEG, WEBP, or GIF.',
+  });
+}
+
 
     // Validate base64 length / size
     const estimatedSizeBytes = Math.round((base64Data.length * 3) / 4);
@@ -277,7 +287,16 @@ app.post('/api/analyze', async (req: Request, res: Response) => {
   }
 });
 
-// Start Express server and attach Vite middleware in development
+} catch (error: unknown) {
+  const latencyMs = Date.now() - startTime;
+
+  console.error('Gemma Vision analysis failed:', error);
+
+  return res.status(500).json({
+    error: 'Image analysis failed. Please try again. If the problem continues, check the server logs and API configuration.',
+    latencyMs,
+  });
+}
 async function startServer() {
   const isProduction = process.env.NODE_ENV === 'production';
   const server = http.createServer(app);
